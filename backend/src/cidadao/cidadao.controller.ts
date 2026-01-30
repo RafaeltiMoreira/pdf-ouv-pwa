@@ -1,12 +1,21 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CidadaoService } from './cidadao.service';
 import { ListCidadaoDto } from './dto/list-cidadaos.dto';
+import { LoginCidadaoDto } from './dto/login-cidadao.dto';
 
 @ApiTags('cidadaos')
 @Controller('cidadaos')
 export class CidadaoController {
   constructor(private readonly cidadaoService: CidadaoService) {}
+
+  @Post('login')
+  @ApiOperation({ summary: 'Autenticar ou criar um cidadão' })
+  @ApiResponse({ status: 200, description: 'Cidadão autenticado/criado' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  async login(@Body() dto: LoginCidadaoDto) {
+    return this.cidadaoService.findOrCreate(dto);
+  }
 
   @Get('email/:email')
   @ApiOperation({ summary: 'Buscar cidadão por email' })
