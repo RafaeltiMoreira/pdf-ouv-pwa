@@ -6,6 +6,12 @@ import { buscarRegistroPorId } from "@/services/registros";
 import Timeline from "@/components/timeline/Timeline";
 import Respostas from "@/components/respostas/Respostas";
 import Header from "@/components/layout/Header";
+import { downloadManifestationAsPdf } from "@/utils/download";
+import {
+  StatusBadge,
+  formatManifestacaoStatus,
+  ManifestacaoStatus,
+} from "@/components/status/StatusBadge";
 import {
   ChevronLeft,
   Printer,
@@ -17,10 +23,25 @@ import {
   Loader2,
   AlertCircle,
   Clock,
-  CheckCircle2,
-  CircleDot
+  ShieldCheck
 } from "lucide-react";
-import { toast } from "sonner";
+
+type Tramitacao = {
+  id: string;
+  statusNovo: string;
+  observacao: string;
+  createdAt: string;
+};
+
+type Resposta = {
+  id: string;
+  conteudo: string;
+  createdAt: string;
+  usuario: {
+    nome: string;
+  };
+  anexos: []; // TODO: Definir tipo de anexo da resposta
+};
 
 type ManifestacaoDetalhe = {
   id: string;
@@ -39,6 +60,8 @@ type ManifestacaoDetalhe = {
     nome: string;
     email: string;
   };
+  tramitacoes: Tramitacao[];
+  respostas: Resposta[];
 };
 
 export default function DetalheManifestacaoPage() {
@@ -53,6 +76,7 @@ export default function DetalheManifestacaoPage() {
 
   useEffect(() => {
     async function carregar() {
+      if (!id) return;
       try {
         const data = await buscarRegistroPorId(id);
         setRegistro(data);
@@ -72,89 +96,9 @@ export default function DetalheManifestacaoPage() {
 
   async function handleDownloadPDF() {
     if (!registro) return;
-
-    // Create a simple text-based PDF content
-    const content = `
-OUVIDORIA DIGITAL - COMPROVANTE DE MANIFESTACAO
-================================================
-
-PROTOCOLO: ${registro.protocolo}
-DATA DE REGISTRO: ${new Date(registro.createdAt).toLocaleDateString("pt-BR")}
-STATUS: ${formatStatus(registro.status)}
-
-ASSUNTO:
-${registro.assunto}
-
-DESCRICAO:
-${registro.conteudo}
-
-${registro.cidadao ? `
-DADOS DO CIDADAO:
-Nome: ${registro.cidadao.nome}
-Email: ${registro.cidadao.email}
-` : "Manifestacao Anonima"}
-
-ANEXOS:
-${registro.anexos.length > 0
-        ? registro.anexos.map(a => `- ${a.nomeOriginal} (${a.tipo})`).join('\n')
-        : "Nenhum anexo enviado"
-      }
-
-================================================
-Documento gerado em: ${new Date().toLocaleString("pt-BR")}
-    `.trim();
-
-    // Create blob and download
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `manifestacao-${registro.protocolo}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    toast.success("Arquivo baixado com sucesso!");
-  }
-
-  function getStatusIcon(statusValue: string) {
-    switch (statusValue) {
-      case "RECEBIDA":
-        return <CircleDot className="h-4 w-4" />;
-      case "EM_ANALISE":
-        return <Clock className="h-4 w-4" />;
-      case "CONCLUIDA":
-        return <CheckCircle2 className="h-4 w-4" />;
-      default:
-        return <CircleDot className="h-4 w-4" />;
-    }
-  }
-
-  function getStatusStyle(statusValue: string) {
-    switch (statusValue) {
-      case "RECEBIDA":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-      case "EM_ANALISE":
-        return "bg-amber-100 text-amber-700 border-amber-200";
-      case "CONCLUIDA":
-        return "bg-green-100 text-green-700 border-green-200";
-      default:
-        return "bg-muted text-muted-foreground border-border";
-    }
-  }
-
-  function formatStatus(statusValue: string) {
-    switch (statusValue) {
-      case "RECEBIDA":
-        return "Recebida";
-      case "EM_ANALISE":
-        return "Em analise";
-      case "CONCLUIDA":
-        return "Concluida";
-      default:
-        return statusValue;
-    }
+    downloadManifestationAsPdf(registro, (status: string) =>
+      formatManifestacaoStatus(status as ManifestacaoStatus)
+    );
   }
 
   if (loading) {
@@ -182,31 +126,23 @@ Documento gerado em: ${new Date().toLocaleString("pt-BR")}
     );
   }
 
-  const eventosMock = [
-    {
-      id: "1",
-      status: "Recebida",
-      descricao: "Manifestação registrada pelo cidadão.",
-      data: "2026-01-28T10:15:00",
-    },
-    {
-      id: "2",
-      status: "Em análise",
-      descricao: "Encaminhada para o órgão responsável.",
-      data: "2026-01-29T09:40:00",
-    },
-  ];
+  // Mapeia os dados recebidos do backend
+  const eventos = registro.tramitacoes.map(t => ({
+    id: t.id,
+    status: t.statusNovo,
+    descricao: t.observacao,
+    data: t.createdAt,
+  }));
 
-  const respostasMock = [
-    {
-      id: "r1",
-      mensagem:
-        "Informamos que sua manifestação foi analisada e encaminhada à unidade responsável. O prazo para resposta é de até 30 dias.",
-      autor: "Ouvidoria-Geral do DF",
-      data: "2026-01-30T14:20:00",
-      anexos: [],
-    },
-  ];
+  const respostas = registro.respostas.map(r => ({
+    id: r.id,
+    mensagem: r.conteudo,
+    autor: r.usuario.nome || "Equipe da Ouvidoria",
+    data: r.createdAt,
+    anexos: r.anexos || [],
+  }));
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/v1";
 
   return (
     <div className="min-h-screen bg-background">
@@ -216,11 +152,11 @@ Documento gerado em: ${new Date().toLocaleString("pt-BR")}
           <div className="flex items-center justify-between no-print">
             <button
               type="button"
-              onClick={() => router.back()}
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-card-foreground transition-colors"
+              onClick={() => router.push("/meus-registros")}
+              className="inline-flex items-center gap-2 px-6 py-2.5 border border-border rounded-xl text-card-foreground hover:bg-muted transition-colors"
             >
-              <ChevronLeft className="h-5 w-5" />
-              Voltar
+              <ChevronLeft className="h-4 w-4" />
+              Voltar para meus registros
             </button>
 
             <div className="flex items-center gap-2">
@@ -258,13 +194,10 @@ Documento gerado em: ${new Date().toLocaleString("pt-BR")}
                   </h1>
                 </div>
 
-                <span className={`
-                  inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full border self-start
-                  ${getStatusStyle(registro.status)}
-                `}>
-                  {getStatusIcon(registro.status)}
-                  {formatStatus(registro.status)}
-                </span>
+                <StatusBadge
+                  status={registro.status as ManifestacaoStatus}
+                  className="self-start"
+                />
               </div>
 
               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-2 border-t border-border">
@@ -304,14 +237,31 @@ Documento gerado em: ${new Date().toLocaleString("pt-BR")}
                   Nenhum anexo enviado.
                 </p>
               ) : (
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {registro.anexos.map((anexo) => (
                     <li
                       key={anexo.id}
-                      className="flex items-center gap-2 text-sm text-primary hover:underline cursor-pointer"
+                      className="flex items-center justify-between rounded-lg border border-border bg-card p-3 shadow-sm"
                     >
-                      <FileText className="h-4 w-4" />
-                      {anexo.nomeOriginal} ({anexo.tipo})
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-6 w-6 text-primary" />
+                        <div className="grid gap-0.5">
+                          <p className="text-sm font-medium leading-none">
+                            {anexo.nomeOriginal}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {anexo.tipo}
+                          </p>
+                        </div>
+                      </div>
+                      <a
+                        href={`${apiUrl}/anexos/${anexo.id}/download`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-8 items-center justify-center whitespace-nowrap rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                      >
+                        Baixar anexo
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -334,26 +284,21 @@ Documento gerado em: ${new Date().toLocaleString("pt-BR")}
 
             {/* Timeline */}
             <div className="bg-card border border-border rounded-xl p-6 mt-4">
-              <Timeline eventos={eventosMock} />
+              <Timeline eventos={eventos} />
             </div>
 
             {/* Responses */}
             <div className="bg-card border border-border rounded-xl p-6 mt-4">
-              <Respostas respostas={respostasMock} />
+              <Respostas respostas={respostas} />
             </div>
+
+            <p className="text-center text-xs text-muted-foreground mt-6 pt-4 border-t border-border flex items-center justify-center gap-1">
+              <ShieldCheck className="h-4 w-4" /> Dados estão protegidos pela Lei Geral de Protecao de Dados (LGPD).
+            </p>
           </div>
 
           {/* Footer */}
-          <div className="pt-4 flex gap-3 no-print">
-            <button
-              type="button"
-              onClick={() => router.push("/meus-registros")}
-              className="inline-flex items-center gap-2 px-6 py-2.5 border border-border rounded-xl text-card-foreground hover:bg-muted transition-colors"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Voltar para meus registros
-            </button>
-          </div>
+          <div className="pt-4 flex gap-3 no-print" />
         </section>
       </main>
     </div>

@@ -5,6 +5,10 @@ import { listarRegistros, RegistroResumo } from "@/services/registros";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import {
+  StatusBadge,
+  ManifestacaoStatus,
+} from "@/components/status/StatusBadge";
+import {
   Search,
   Filter,
   FileText,
@@ -12,10 +16,7 @@ import {
   ChevronRight,
   Loader2,
   AlertCircle,
-  Inbox,
-  Clock,
-  CheckCircle2,
-  CircleDot
+  Inbox
 } from "lucide-react";
 
 export default function MeusRegistrosPage() {
@@ -50,45 +51,6 @@ export default function MeusRegistrosPage() {
     carregarRegistros();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  function getStatusIcon(statusValue: string) {
-    switch (statusValue) {
-      case "RECEBIDA":
-        return <CircleDot className="h-4 w-4" />;
-      case "EM_ANALISE":
-        return <Clock className="h-4 w-4" />;
-      case "CONCLUIDA":
-        return <CheckCircle2 className="h-4 w-4" />;
-      default:
-        return <CircleDot className="h-4 w-4" />;
-    }
-  }
-
-  function getStatusStyle(statusValue: string) {
-    switch (statusValue) {
-      case "RECEBIDA":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-      case "EM_ANALISE":
-        return "bg-amber-100 text-amber-700 border-amber-200";
-      case "CONCLUIDA":
-        return "bg-green-100 text-green-700 border-green-200";
-      default:
-        return "bg-muted text-muted-foreground border-border";
-    }
-  }
-
-  function formatStatus(statusValue: string) {
-    switch (statusValue) {
-      case "RECEBIDA":
-        return "Recebida";
-      case "EM_ANALISE":
-        return "Em analise";
-      case "CONCLUIDA":
-        return "Concluida";
-      default:
-        return statusValue;
-    }
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -204,13 +166,10 @@ export default function MeusRegistrosPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <span className={`
-                        inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border
-                        ${getStatusStyle(registro.status)}
-                      `}>
-                        {getStatusIcon(registro.status)}
-                        {formatStatus(registro.status)}
-                      </span>
+                      <StatusBadge
+                        status={registro.status as ManifestacaoStatus}
+                        size="sm"
+                      />
                       <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                     </div>
                   </div>
