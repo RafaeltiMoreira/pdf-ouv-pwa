@@ -20,37 +20,6 @@ export class CidadaoDataDto {
   @ApiProperty({ example: 'joao.silva@email.com' })
   @IsEmail({}, { message: 'Email inválido' })
   email: string;
-
-  @ApiPropertyOptional({ example: '123.456.789-00' })
-  @IsOptional()
-  @IsString()
-  cpf?: string;
-
-  @ApiPropertyOptional({ example: '(61) 98765-4321' })
-  @IsOptional()
-  @IsString()
-  telefone?: string;
-
-  @ApiPropertyOptional({ example: 'Rua das Flores, 123' })
-  @IsOptional()
-  @IsString()
-  endereco?: string;
-
-  @ApiPropertyOptional({ example: 'Brasília' })
-  @IsOptional()
-  @IsString()
-  cidade?: string;
-
-  @ApiPropertyOptional({ example: 'DF' })
-  @IsOptional()
-  @IsString()
-  @MaxLength(2)
-  estado?: string;
-
-  @ApiPropertyOptional({ example: '70000-000' })
-  @IsOptional()
-  @IsString()
-  cep?: string;
 }
 
 export class CreateManifestacaoDto {
@@ -90,6 +59,22 @@ export class CreateManifestacaoDto {
   @ValidateNested()
   @Type(() => CidadaoDataDto)
   cidadao?: CidadaoDataDto;
+
+  @ApiPropertyOptional({
+    description: 'Latitude da localização do ocorrido',
+    example: '-15.7942',
+  })
+  @IsOptional()
+  @IsString()
+  latitude?: string;
+
+  @ApiPropertyOptional({
+    description: 'Longitude da localização do ocorrido',
+    example: '-47.8825',
+  })
+  @IsOptional()
+  @IsString()
+  longitude?: string;
 }
 
 export class ManifestacaoResponseDto {
