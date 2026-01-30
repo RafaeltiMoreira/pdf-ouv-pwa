@@ -58,6 +58,8 @@ model Manifestacao {
   // Dados da manifestação
   assunto   String   @db.VarChar(120)
   conteudo  String   @db.Text
+  latitude  String?  @db.VarChar(50)
+  longitude String?  @db.VarChar(50)
   anonimo   Boolean  @default(false)
   
   // Classificação

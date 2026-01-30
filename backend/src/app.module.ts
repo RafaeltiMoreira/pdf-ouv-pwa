@@ -6,6 +6,7 @@ import { ManifestacaoModule } from './manifestacao/manifestacao.module';
 import { CidadaoModule } from './cidadao/cidadao.module';
 import { UploadModule } from './upload/upload.module';
 import { HealthModule } from './health/health.module';
+import { AnexoModule } from './anexo/anexo.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { HealthModule } from './health/health.module';
     ManifestacaoModule,
     CidadaoModule,
     UploadModule,
+    AnexoModule,
   ],
 })
 export class AppModule {}
