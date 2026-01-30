@@ -1,36 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useCidadao } from "@/components/providers/cidadao-provider";
+import { useRouter } from "next/navigation";
 import Stepper from "@/components/stepper/Stepper";
 import StepDados from "./steps/StepDados";
 import StepAnexos from "./steps/StepAnexos";
 import StepRevisao from "./steps/StepRevisao";
-import ManifestacaoSucesso from "@/components/ManifestacaoSucesso";
+import ManifestacaoSucesso from "@/components/success/ManifestacaoSucesso";
 import Header from "@/components/layout/Header";
+import { Loader2, ShieldCheck } from "lucide-react";
 
 export type ManifestacaoForm = {
   assunto: string;
   conteudo: string;
   audioBlob: Blob | null;
+  audioMimeType: string;
   anexos: File[];
   localizacao?: {
-    lat: number;
-    lng: number;
+    lat: string;
+    lng: string;
   };
   anonimo: boolean;
+  cidadao?: {
+    nome: string;
+    email: string;
+  };
+};
+
+type DraftData = {
+  assunto: string;
+  conteudo: string;
+  audioBlob: Blob | null;
+  audioMimeType: string;
+  anexos: File[];
+  anonimo: boolean;
+}
+
+const initialDraft: DraftData = {
+  assunto: "",
+  conteudo: "",
+  audioBlob: null,
+  audioMimeType: "",
+  anexos: [],
+  anonimo: false,
 };
 
 export default function ManifestacaoPage() {
+  const { cidadao, loading: cidadaoLoading } = useCidadao();
+  const router = useRouter();
+
   const [step, setStep] = useState(2); // 2 = Relato
   const [protocolo, setProtocolo] = useState<string | null>(null);
+  const [draftData, setDraftData] = useState(initialDraft);
 
-  const [form, setForm] = useState<ManifestacaoForm>({
-    assunto: "",
-    conteudo: "",
-    audioBlob: null,
-    anexos: [],
-    anonimo: false,
-  });
+  // Derivando estado em vez de sincronizar com Effect
+  const fullForm: ManifestacaoForm = {
+    ...draftData,
+    cidadao: cidadao ? { nome: cidadao.nome, email: cidadao.email } : undefined,
+  };
+
+  const handleDraftChange = useCallback((changes: Partial<DraftData>) => {
+    setDraftData(prev => ({ ...prev, ...changes }));
+  }, []);
+
+  // Efeito para proteger a rota
+  useEffect(() => {
+    if (!cidadaoLoading && !cidadao) {
+      router.replace("/");
+    }
+  }, [cidadao, cidadaoLoading, router]);
+
+  if (cidadaoLoading || !cidadao) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 text-primary animate-spin" />
+        </main>
+      </div>
+    )
+  }
 
   /* ===============================
      SUCESSO (NÃO MOSTRA STEPPER)
@@ -45,13 +95,7 @@ export default function ManifestacaoPage() {
             novaManifestacao={() => {
               setProtocolo(null);
               setStep(2);
-              setForm({
-                assunto: "",
-                conteudo: "",
-                audioBlob: null,
-                anexos: [],
-                anonimo: false,
-              });
+              setDraftData(initialDraft);
             }}
           />
         </main>
@@ -71,16 +115,16 @@ export default function ManifestacaoPage() {
 
           {step === 2 && (
             <StepDados
-              data={form}
-              onChange={setForm}
+              data={fullForm}
+              onChange={handleDraftChange}
               onNext={() => setStep(3)}
             />
           )}
 
           {step === 3 && (
             <StepAnexos
-              data={form}
-              onChange={setForm}
+              data={fullForm}
+              onChange={handleDraftChange}
               onBack={() => setStep(2)}
               onNext={() => setStep(4)}
             />
@@ -88,15 +132,15 @@ export default function ManifestacaoPage() {
 
           {step === 4 && (
             <StepRevisao
-              data={form}
+              data={fullForm}
               onBack={() => setStep(3)}
               onSuccess={(newProtocolo) => setProtocolo(newProtocolo)}
             />
           )}
 
           {/* LGPD Notice */}
-          <p className="text-center text-xs text-muted-foreground mt-6 pt-4 border-t border-border">
-            🔒 Seus dados estão protegidos pela Lei Geral de Protecao de Dados (LGPD).
+          <p className="text-center text-xs text-muted-foreground mt-6 pt-4 border-t border-border flex items-center justify-center gap-1">
+            <ShieldCheck className="h-4 w-4" /> Dados estão protegidos pela Lei Geral de Protecao de Dados (LGPD).
           </p>
         </section>
       </main>
