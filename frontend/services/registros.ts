@@ -1,4 +1,4 @@
-import { apiHttp } from "./apiHttp";
+import { axiosInstance } from "./apiHttp";
 
 /**
  * Tipos alinhados ao backend
@@ -30,7 +30,7 @@ export async function listarRegistros(params?: {
   status?: string;
   protocolo?: string;
 }): Promise<ListaRegistrosResponse> {
-  const response = await apiHttp.get<ListaRegistrosResponse>(
+  const response = await axiosInstance.get<ListaRegistrosResponse>(
     "/manifestacoes",
     { params }
   );
@@ -43,14 +43,14 @@ export async function listarRegistros(params?: {
 export async function buscarRegistroPorProtocolo(
   protocolo: string
 ) {
-  const response = await apiHttp.get(
+  const response = await axiosInstance.get(
     `/manifestacoes/protocolo/${protocolo}`
   );
   return response.data;
 }
 
 export async function buscarRegistroPorId(id: string) {
-  const response = await apiHttp.get(
+  const response = await axiosInstance.get(
     `/manifestacoes/${id}`
   );
   return response.data;

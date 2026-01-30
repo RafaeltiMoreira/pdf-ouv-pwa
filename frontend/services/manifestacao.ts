@@ -1,9 +1,22 @@
-import axios from "axios";
-import { CriarManifestacaoDTO } from "@/types/manifestacao";
+import { axiosInstance } from "./apiHttp";
+
+export type CriarManifestacaoDTO = {
+  assunto: string;
+  conteudo: string;
+  anonimo: boolean;
+  cidadao?: {
+    nome: string;
+    email: string;
+  };
+  latitude?: string;
+  longitude?: string;
+  audio?: File;
+  anexos?: File[];
+};
 
 export async function criarManifestacao(
   data: CriarManifestacaoDTO
-) {
+): Promise<{ protocolo: string }> {
   const formData = new FormData();
 
   formData.append("assunto", data.assunto);
@@ -15,6 +28,12 @@ export async function criarManifestacao(
     formData.append("longitude", String(data.longitude));
   }
 
+  // Adiciona dados do cidadão se não for anônimo
+  if (!data.anonimo && data.cidadao) {
+    formData.append('cidadao[nome]', data.cidadao.nome);
+    formData.append('cidadao[email]', data.cidadao.email);
+  }
+
   if (data.audio) {
     formData.append("audio", data.audio);
   }
@@ -23,15 +42,9 @@ export async function criarManifestacao(
     formData.append("anexos", file);
   });
 
-  const response = await axios.post(
+  const response = await axiosInstance.post(
     "/manifestacoes",
     formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
   );
-
   return response.data;
 }
