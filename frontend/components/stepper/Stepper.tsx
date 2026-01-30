@@ -1,3 +1,5 @@
+import { Check } from "lucide-react";
+
 type Step = {
   id: number;
   label: string;
@@ -16,55 +18,70 @@ type Props = {
 
 export default function Stepper({ currentStep }: Props) {
   return (
-    <div className="flex items-center justify-between mb-6">
-      {steps.map((step, index) => {
-        const ativo = step.id === currentStep;
-        const concluido = step.id < currentStep;
+    <nav aria-label="Progresso" className="mb-8">
+      <ol className="flex items-center justify-between">
+        {steps.map((step, index) => {
+          const ativo = step.id === currentStep;
+          const concluido = step.id < currentStep;
 
-        return (
-          <div key={step.id} className="flex items-center w-full">
-            {/* Círculo + label */}
-            <div className="flex flex-col items-center min-w-16">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-                  ${concluido
-                    ? "bg-green-600 text-white"
-                    : ativo
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-600 text-gray-300"
-                  }`}
-              >
-                {step.id}
-              </div>
-
-              <span
-                className={`mt-1 text-xs text-center whitespace-nowrap
-                  ${ativo
-                    ? "text-blue-400 font-semibold"
-                    : concluido
-                      ? "text-green-400"
-                      : "text-gray-400"
-                  }`}
-              >
-                {step.label}
-              </span>
-            </div>
-
-            {/* Linha de conexão */}
-            {index < steps.length - 1 && (
-              <div className="flex-1 flex items-center">
+          return (
+            <li key={step.id} className="flex items-center flex-1 last:flex-initial">
+              <div className="flex flex-col items-center gap-2">
+                {/* Circle indicator */}
                 <div
-                  className={`h-px w-full mx-2
-                    ${step.id < currentStep
-                      ? "bg-green-600"
-                      : "bg-gray-700"
-                    }`}
-                />
+                  className={`
+                    relative flex h-10 w-10 items-center justify-center rounded-full 
+                    text-sm font-semibold transition-all duration-300
+                    ${concluido
+                      ? "bg-accent text-accent-foreground shadow-sm"
+                      : ativo
+                        ? "bg-primary text-primary-foreground shadow-md ring-4 ring-primary/20"
+                        : "bg-muted text-muted-foreground"
+                    }
+                  `}
+                  aria-current={ativo ? "step" : undefined}
+                >
+                  {concluido ? (
+                    <Check className="h-5 w-5" strokeWidth={3} />
+                  ) : (
+                    step.id
+                  )}
+                </div>
+
+                {/* Label */}
+                <span
+                  className={`
+                    text-xs font-medium text-center whitespace-nowrap transition-colors
+                    ${ativo
+                      ? "text-primary"
+                      : concluido
+                        ? "text-accent"
+                        : "text-muted-foreground"
+                    }
+                  `}
+                >
+                  {step.label}
+                </span>
               </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
+
+              {/* Linha de conexão */}
+              {index < steps.length - 1 && (
+                <div className="flex-1 mx-3 h-0.5 rounded-full transition-colors duration-300 self-start mt-5">
+                  <div
+                    className={`
+                      h-full rounded-full transition-all duration-500
+                      ${step.id < currentStep
+                        ? "bg-accent"
+                        : "bg-border"
+                      }
+                    `}
+                  />
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 }
