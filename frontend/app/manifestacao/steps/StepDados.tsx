@@ -53,7 +53,7 @@ export default function StepDados({ data, onChange, onNext }: Props) {
           onChange={(e) => atualizar("assunto", e.target.value)}
           rows={2}
           className="w-full border border-border rounded-xl p-3 resize-none bg-card text-card-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-          placeholder="Resumo curto da manifestacao"
+          placeholder="Resumo curto da manifestação"
         />
         <div className="flex items-center justify-between">
           {data.assunto && !assuntoValido ? (
@@ -112,7 +112,7 @@ export default function StepDados({ data, onChange, onNext }: Props) {
           onChange={(e) => atualizar("conteudo", e.target.value)}
           rows={5}
           className="w-full border border-border rounded-xl p-3 resize-none bg-card text-card-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-          placeholder="Descreva o ocorrido com o maximo de informacoes possiveis"
+          placeholder="Descreva o ocorrido com o máximo de informações possíveis."
         />
         <div className="flex items-center justify-between">
           {data.conteudo && !conteudoValido ? (
