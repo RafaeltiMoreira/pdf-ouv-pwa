@@ -1,7 +1,9 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { CidadaoProvider } from "@/components/providers/cidadao-provider";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -13,24 +15,22 @@ export const metadata: Metadata = {
   description: "Sistema de ouvidoria digital para registro e acompanhamento de manifestações",
 };
 
-export const viewport: Viewport = {
-  themeColor: "#2563eb",
-  width: "device-width",
-  initialScale: 1,
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${inter.variable} antialiased font-sans`}
       >
-        {children}
-        <Toaster position="top-center" richColors />
+        <ThemeProvider>
+          <CidadaoProvider>
+            {children}
+            <Toaster position="top-center" richColors />
+          </CidadaoProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
