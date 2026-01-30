@@ -3,6 +3,16 @@
 import { useState } from "react";
 import { criarManifestacao } from "@/services/manifestacao";
 import { CriarManifestacaoDTO } from "@/types/manifestacao";
+import {
+  ChevronLeft,
+  Send,
+  FileText,
+  MapPin,
+  Paperclip,
+  ShieldCheck,
+  Loader2,
+  AlertCircle
+} from "lucide-react";
 
 type Props = {
   data: {
@@ -70,67 +80,96 @@ export default function StepRevisao({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">
-        Revisão da manifestação
-      </h2>
+      {/* Header */}
+      <div>
+        <h2 className="text-xl font-semibold text-card-foreground">
+          Revisão da manifestação
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Confira as informações antes de enviar sua manifestação.
+        </p>
+      </div>
 
-      <div className="space-y-4 text-sm">
-        {/* ASSUNTO */}
-        <div>
-          <span className="text-gray-400">Assunto</span>
-          <p className="font-medium">
-            {data.assunto || "—"}
+      {/* Revisão do Card */}
+      <div className="bg-muted/30 border border-border rounded-xl p-5 space-y-5">
+        {/* Assunto */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <FileText className="h-3.5 w-3.5" />
+            Assunto
+          </div>
+          <p className="text-card-foreground font-medium">
+            {data.assunto || "---"}
           </p>
         </div>
 
-        {/* CONTEÚDO */}
-        <div>
-          <span className="text-gray-400">Descrição</span>
-          <p className="whitespace-pre-line">
-            {data.conteudo || "—"}
+        {/* Descricão */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <FileText className="h-3.5 w-3.5" />
+            Descrição
+          </div>
+          <p className="text-card-foreground whitespace-pre-line text-sm leading-relaxed">
+            {data.conteudo || "---"}
           </p>
         </div>
 
-        {/* ANEXOS */}
-        <div>
-          <span className="text-gray-400">Anexos</span>
-          <p>
+        {/* Anexos */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <Paperclip className="h-3.5 w-3.5" />
+            Anexos
+          </div>
+          <p className="text-card-foreground">
             {data.anexos.length > 0
-              ? `${data.anexos.length} arquivo(s)`
-              : "Nenhum"}
+              ? `${data.anexos.length} arquivo(s) anexado(s)`
+              : "Nenhum arquivo anexado"}
           </p>
+          {data.anexos.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {data.anexos.map((file, i) => (
+                <li key={i} className="text-sm text-muted-foreground">
+                  - {file.name}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
-        {/* LOCALIZAÇÃO */}
+        {/* Localização */}
         {data.localizacao && (
-          <div className="flex items-center gap-2 text-green-500">
-            📍 Localização incluída
+          <div className="flex items-center gap-2 text-accent">
+            <MapPin className="h-4 w-4" />
+            <span className="text-sm font-medium">Localização incluída</span>
           </div>
         )}
 
-        {/* ANÔNIMO */}
+        {/* Anônimo */}
         {data.anonimo && (
-          <div className="text-yellow-500">
-            🔒 Manifestação anônima
+          <div className="flex items-center gap-2 text-amber-600">
+            <ShieldCheck className="h-4 w-4" />
+            <span className="text-sm font-medium">Manifestação anônima</span>
           </div>
         )}
       </div>
 
-      {/* ERRO */}
+      {/* Error */}
       {erro && (
-        <p className="text-red-500 text-sm" role="alert">
+        <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive text-sm" role="alert">
+          <AlertCircle className="h-4 w-4 shrink-0" />
           {erro}
-        </p>
+        </div>
       )}
 
-      {/* AÇÕES */}
-      <div className="flex gap-2 pt-2">
+      {/* Navigation */}
+      <div className="flex items-center gap-3 pt-4">
         <button
           type="button"
           onClick={onBack}
           disabled={enviando}
-          className="flex-1 border border-gray-500 text-gray-300 py-2 rounded disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl border border-border text-card-foreground hover:bg-muted transition-colors disabled:opacity-50"
         >
+          <ChevronLeft className="h-4 w-4" />
           Voltar
         </button>
 
@@ -138,9 +177,19 @@ export default function StepRevisao({
           type="button"
           onClick={enviarManifestacao}
           disabled={enviando}
-          className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded disabled:opacity-50"
+          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-accent text-accent-foreground font-medium hover:bg-accent/90 transition-colors disabled:opacity-50"
         >
-          {enviando ? "Enviando..." : "Enviar manifestação"}
+          {enviando ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Enviando...
+            </>
+          ) : (
+            <>
+              <Send className="h-4 w-4" />
+              Enviar manifestação
+            </>
+          )}
         </button>
       </div>
     </div>
