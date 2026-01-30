@@ -1,5 +1,6 @@
 import TimelineItem from "./TimelineItem";
 import { TimelineEvento } from "./types";
+import { History } from "lucide-react";
 
 type Props = {
   eventos: TimelineEvento[];
@@ -7,12 +8,13 @@ type Props = {
 
 export default function Timeline({ eventos }: Props) {
   return (
-    <div className="mt-6">
-      <h2 className="font-medium mb-4">
+    <div>
+      <h2 className="font-medium text-card-foreground mb-4 flex items-center gap-2">
+        <History className="h-4 w-4 text-primary" />
         Histórico da manifestação
       </h2>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         {eventos.map((evento, index) => (
           <TimelineItem
             key={evento.id}
