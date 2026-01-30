@@ -5,8 +5,21 @@ import { Mic, Square, Trash2, AudioWaveform } from "lucide-react";
 import { toast } from "sonner";
 
 type Props = {
-  onRecorded: (blob: Blob) => void;
+  onRecorded: (blob: Blob, mimeType: string) => void;
 };
+
+function getSupportedMimeType(): string {
+  // Em ambientes SSR, MediaRecorder não existe.
+  if (typeof MediaRecorder === "undefined") {
+    return "audio/webm";
+  }
+
+  const supportedMimeTypes = ["audio/mp4", "audio/webm", "audio/ogg"];
+  return (
+    supportedMimeTypes.find((type) => MediaRecorder.isTypeSupported(type)) ||
+    "audio/webm"
+  );
+}
 
 export default function AudioRecorder({ onRecorded }: Props) {
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -14,14 +27,18 @@ export default function AudioRecorder({ onRecorded }: Props) {
   const [gravando, setGravando] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [inicioGravacao, setInicioGravacao] = useState<number | null>(null);
-
   const [timeElapsed, setTimeElapsed] = useState(0);
   const timeElapsedRef = useRef(0);
+
+  // Lazy state initialization to avoid useEffect warning
+  const [mimeType] = useState(getSupportedMimeType);
 
   useEffect(() => {
     if (gravando && inicioGravacao) {
       const interval = setInterval(() => {
-        timeElapsedRef.current = Math.floor((Date.now() - inicioGravacao) / 1000);
+        timeElapsedRef.current = Math.floor(
+          (Date.now() - inicioGravacao) / 1000
+        );
         setTimeElapsed(timeElapsedRef.current);
       }, 1000);
       return () => clearInterval(interval);
@@ -31,7 +48,9 @@ export default function AudioRecorder({ onRecorded }: Props) {
   function formatTime(seconds: number) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   }
 
   async function iniciarGravacao() {
@@ -40,7 +59,7 @@ export default function AudioRecorder({ onRecorded }: Props) {
         audio: true,
       });
 
-      const recorder = new MediaRecorder(stream);
+      const recorder = new MediaRecorder(stream, { mimeType });
       recorderRef.current = recorder;
       chunksRef.current = [];
 
@@ -49,17 +68,19 @@ export default function AudioRecorder({ onRecorded }: Props) {
       };
 
       recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const blob = new Blob(chunksRef.current, { type: mimeType });
         const url = URL.createObjectURL(blob);
         setAudioURL(url);
-        onRecorded(blob);
+        onRecorded(blob, mimeType);
       };
 
       recorder.start();
       setInicioGravacao(Date.now());
       setGravando(true);
     } catch {
-      toast.error("Nao foi possivel acessar o microfone. Verifique as permissoes.");
+      toast.error(
+        "Nao foi possivel acessar o microfone. Verifique as permissoes."
+      );
     }
   }
 
@@ -126,7 +147,7 @@ export default function AudioRecorder({ onRecorded }: Props) {
       {audioURL && (
         <div className="space-y-3 pt-2">
           <audio controls className="w-full h-10">
-            <source src={audioURL} type="audio/webm" />
+            <source src={audioURL} type={mimeType} />
             Seu navegador não suporta ou não pode reproduzir áudio.
           </audio>
 
@@ -135,7 +156,7 @@ export default function AudioRecorder({ onRecorded }: Props) {
             onClick={() => {
               setAudioURL(null);
               setTimeElapsed(0);
-              onRecorded(new Blob());
+              onRecorded(new Blob(), "");
             }}
             className="inline-flex items-center gap-2 text-sm text-destructive hover:text-destructive/80 transition-colors"
           >
@@ -146,7 +167,8 @@ export default function AudioRecorder({ onRecorded }: Props) {
       )}
 
       <p className="text-xs text-muted-foreground">
-        Caso prefira, você pode gravar um áudio relatando o problema em vez de digitar.
+        Caso prefira, você pode gravar um áudio relatando o problema em vez de
+        digitar.
       </p>
     </div>
   );
