@@ -6,7 +6,7 @@ import AudioTranscriber, {
   AudioTranscriberHandle,
 } from "@/components/audio/AudioTranscriber";
 import { ManifestacaoForm } from "../page";
-import { Mic, MicOff, ChevronLeft, ChevronRight } from "lucide-react";
+import { Mic, MicOff, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 type Props = {
   data: ManifestacaoForm;
@@ -20,6 +20,8 @@ export default function StepDados({ data, onChange, onNext }: Props) {
   const [transcrevendo, setTranscrevendo] =
     useState<null | "assunto" | "conteudo">(null);
 
+  const [modalAnonimoAberto, setModalAnonimoAberto] = useState(false);
+
   function atualizar<K extends keyof ManifestacaoForm>(
     campo: K,
     valor: ManifestacaoForm[K]
@@ -31,7 +33,7 @@ export default function StepDados({ data, onChange, onNext }: Props) {
   const conteudoValido = data.conteudo.trim().length >= 20;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       {/* Header */}
       <div>
         <h1 className="text-xl font-semibold text-card-foreground">
@@ -41,6 +43,94 @@ export default function StepDados({ data, onChange, onNext }: Props) {
           Preencha os detalhes do ocorrido abaixo com o máximo de informações possíveis.
         </p>
       </div>
+
+      {/* Manifestação Anônima */}
+      <div className="flex items-center space-x-2 pt-4">
+        <input
+          type="checkbox"
+          id="anonimo"
+          checked={data.anonimo}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setModalAnonimoAberto(true);
+            } else {
+              atualizar("anonimo", false);
+            }
+          }}
+          className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+        />
+        <label htmlFor="anonimo" className="text-sm font-medium leading-none cursor-pointer">
+          Realizar manifestação de forma anônima
+        </label>
+      </div>
+
+      {/* MODAL ANONIMATO (SEM LIBS) */}
+      {modalAnonimoAberto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-card rounded-2xl max-w-xl w-full p-6 space-y-4 relative">
+            <button
+              onClick={() => {
+                atualizar("anonimo", false);
+                setModalAnonimoAberto(false);
+              }}
+              className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <h2 className="text-lg font-semibold">
+              Manifestação Anônima
+            </h2>
+
+            <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
+              <p>
+                Solicito que minha identidade seja preservada neste pedido, em
+                atendimento ao princípio constitucional da impessoalidade e,
+                conforme o disposto no art. 11, § 7º da Lei Distrital nº
+                6.519/2020.
+              </p>
+
+              <p>
+                Estou ciente de que, com a identidade preservada, somente a
+                Controladoria-Geral do Distrito Federal terá acesso aos meus
+                dados pessoais, ressalvadas as exceções previstas nos §§ 3º e
+                4º do art. 33 da Lei Distrital nº 4.990/2012.
+              </p>
+
+              <p>
+                Estou ciente, também, de que o órgão destinatário não poderá
+                solicitar esclarecimentos adicionais, assim como não poderá
+                atender a pedidos de informação pessoal, uma vez que não terá
+                como confirmar minha identidade.
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  atualizar("anonimo", false);
+                  setModalAnonimoAberto(false);
+                }}
+                className="px-4 py-2 rounded-xl border border-border hover:bg-muted"
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  atualizar("anonimo", true);
+                  setModalAnonimoAberto(false);
+                }}
+                className="px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Assunto */}
       <div className="space-y-2">
@@ -101,7 +191,7 @@ export default function StepDados({ data, onChange, onNext }: Props) {
         </div>
       </div>
 
-      {/* Conteudo Field */}
+      {/* Contéudo */}
       <div className="space-y-2">
         <label htmlFor="conteudo" className="block text-sm font-medium text-card-foreground">
           Descrição da manifestação
