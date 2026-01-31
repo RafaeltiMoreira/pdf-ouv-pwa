@@ -21,7 +21,7 @@ export async function criarManifestacao(
 
   formData.append("assunto", data.assunto);
   formData.append("conteudo", data.conteudo);
-  formData.append("anonimo", String(data.anonimo));
+  formData.append("anonimo", data.anonimo ? "true" : "false");
 
   if (data.latitude && data.longitude) {
     formData.append("latitude", String(data.latitude));
@@ -30,8 +30,8 @@ export async function criarManifestacao(
 
   // Adiciona dados do cidadão se não for anônimo
   if (!data.anonimo && data.cidadao) {
-    formData.append('cidadao[nome]', data.cidadao.nome);
-    formData.append('cidadao[email]', data.cidadao.email);
+    formData.append("cidadao[nome]", data.cidadao.nome);
+    formData.append("cidadao[email]", data.cidadao.email);
   }
 
   if (data.audio) {
