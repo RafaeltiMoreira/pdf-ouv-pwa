@@ -26,7 +26,10 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/70">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         {/* == LOGO PARTICIPA DF == */}
-        <Link href="/" className="flex items-center">
+        <Link
+          href={!loading && cidadao ? "/manifestacao" : "/"}
+          className="flex items-center"
+        >
           {mounted ? (
             <Image
               src={
