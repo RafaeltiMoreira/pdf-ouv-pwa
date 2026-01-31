@@ -1,11 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCidadao } from "@/components/providers/cidadao-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import Image from "next/image";
-import { Loader2, AlertCircle, User, Mail, Sun, Moon, ShieldCheck } from "lucide-react";
+import {
+  Loader2,
+  AlertCircle,
+  User,
+  Mail,
+  Sun,
+  Moon,
+  ShieldCheck,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useMounted } from "@/hooks/useMounted";
 
@@ -18,8 +26,14 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-  const { login } = useCidadao();
+  const { cidadao, login, loading: cidadaoLoading } = useCidadao();
   const { resolvedTheme, setTheme } = useTheme();
+
+  useEffect(() => {
+    if (!cidadaoLoading && cidadao) {
+      router.push("/manifestacao");
+    }
+  }, [cidadao, cidadaoLoading, router]);
 
   /* ===== Login ===== */
   async function handleLogin(e: React.FormEvent) {
@@ -198,7 +212,7 @@ export default function Home() {
         </p>
         <p className="flex items-center justify-center gap-1">
           <ShieldCheck className="h-4 w-4" />
-          Dados estão protegidos pela Lei Geral de Protecao de Dados (LGPD).
+          Dados estão protegidos pela Lei Geral de Proteção de Dados (LGPD).
         </p>
       </footer>
     </main>
