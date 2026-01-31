@@ -1,17 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Participa DF - Ouvidoria Digital Acessível
 
-## Getting Started
+Solução desenvolvida no contexto do **1º Hackathon em Controle Social – Desafio Participa DF**, promovido pela Controladoria-Geral do Distrito Federal (CGDF). O objetivo é promover acessibilidade, multicanalidade e fortalecimento do controle social através de uma Ouvidoria Digital moderna e inclusiva.
 
-First, run the development server:
+## 🚀 Tecnologias Utilizadas
+
+A solução foi arquitetada utilizando uma stack moderna baseada em JavaScript/TypeScript, dividida em Frontend (PWA) e Backend (API).
+
+### Frontend (Client-side)
+-   **Framework:** Next.js 14 (App Router)
+-   **Linguagem:** TypeScript
+-   **Estilização:** Tailwind CSS
+-   **Ícones:** Lucide React
+-   **Notificações:** Sonner
+-   **Funcionalidades:**
+    -   PWA (Progressive Web App) para instalação em dispositivos móveis.
+    -   Geolocalização para registro de ocorrências.
+    -   Gravação de áudio e upload de anexos.
+    -   Modo escuro/claro (Dark/Light mode).
+
+### Backend (Server-side)
+-   **Framework:** NestJS
+-   **Linguagem:** TypeScript
+-   **Arquitetura:** Modular e escalável.
+-   **API:** RESTful.
+
+## 📦 Como Rodar o Ambiente
+
+Para executar a solução completa, é necessário rodar tanto o serviço de backend quanto o frontend.
+
+### Pré-requisitos
+-   Node.js (Versão LTS recomendada)
+-   Gerenciador de pacotes (npm, yarn ou pnpm)
+
+### 1. Configurando e Rodando o Backend
+
+Navegue até a pasta do backend, instale as dependências e inicie o servidor:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd backend
+
+# Instalar dependências
+npm install
+
+# Rodar em modo de desenvolvimento
+npm run start:dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
