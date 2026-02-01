@@ -56,6 +56,8 @@ export class ManifestacaoService {
         anonimo: createDto.anonimo,
         cidadaoId,
         prazoResposta,
+        latitude: createDto.latitude,
+        longitude: createDto.longitude,
         status: 'RECEBIDA',
         prioridade: 'MEDIA',
       },
@@ -186,7 +188,7 @@ export class ManifestacaoService {
         tramitacoes: {
           orderBy: { createdAt: 'desc' },
           include: {
-            usuario: {
+            adminUser: {
               select: {
                 nome: true,
                 email: true,
@@ -197,7 +199,7 @@ export class ManifestacaoService {
         respostas: {
           orderBy: { createdAt: 'desc' },
           include: {
-            usuario: {
+            adminUser: {
               select: {
                 nome: true,
                 email: true,
@@ -239,7 +241,7 @@ export class ManifestacaoService {
         respostas: {
           orderBy: { createdAt: 'desc' },
           include: {
-            usuario: {
+            adminUser: {
               select: {
                 nome: true,
                 email: true,

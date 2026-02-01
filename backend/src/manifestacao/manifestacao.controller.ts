@@ -127,6 +127,7 @@ export class ManifestacaoController {
             'audio/wav',
             'audio/webm',
             'audio/ogg',
+            'audio/mp4',
             'video/mp4',
           ];
 
