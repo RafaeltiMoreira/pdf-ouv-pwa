@@ -12,10 +12,10 @@ import {
   Mail,
   Sun,
   Moon,
-  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useMounted } from "@/hooks/useMounted";
+import Footer from "@/components/footer/Footer";
 
 export default function Home() {
   const mounted = useMounted();
@@ -210,10 +210,7 @@ export default function Home() {
         <p>
           <strong>Equipe:</strong> Almada e Rafael Moreira
         </p>
-        <p className="flex items-center justify-center gap-1">
-          <ShieldCheck className="h-4 w-4" />
-          Dados estão protegidos pela Lei Geral de Proteção de Dados (LGPD).
-        </p>
+        <Footer />
       </footer>
     </main>
   );

@@ -9,7 +9,8 @@ import StepAnexos from "./steps/StepAnexos";
 import StepRevisao from "./steps/StepRevisao";
 import ManifestacaoSucesso from "@/components/success/ManifestacaoSucesso";
 import Header from "@/components/layout/Header";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import Footer from "@/components/footer/Footer";
 
 export type ManifestacaoForm = {
   assunto: string;
@@ -144,9 +145,7 @@ export default function ManifestacaoPage() {
           )}
 
           {/* LGPD Notice */}
-          <p className="text-center text-xs text-muted-foreground mt-6 pt-4 border-t border-border flex items-center justify-center gap-1">
-            <ShieldCheck className="h-4 w-4" /> Dados estão protegidos pela Lei Geral de Proteção de Dados (LGPD).
-          </p>
+          <Footer />
         </section>
       </main>
     </div>

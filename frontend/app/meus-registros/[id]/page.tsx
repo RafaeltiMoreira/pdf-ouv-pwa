@@ -23,8 +23,8 @@ import {
   Loader2,
   AlertCircle,
   Clock,
-  ShieldCheck
 } from "lucide-react";
+import Footer from "@/components/footer/Footer";
 
 type Tramitacao = {
   id: string;
@@ -292,9 +292,7 @@ export default function DetalheManifestacaoPage() {
               <Respostas respostas={respostas} />
             </div>
 
-            <p className="text-center text-xs text-muted-foreground mt-6 pt-4 border-t border-border flex items-center justify-center gap-1">
-              <ShieldCheck className="h-4 w-4" /> Dados estão protegidos pela Lei Geral de Proteção de Dados (LGPD).
-            </p>
+            <Footer />
           </div>
 
           {/* Footer */}

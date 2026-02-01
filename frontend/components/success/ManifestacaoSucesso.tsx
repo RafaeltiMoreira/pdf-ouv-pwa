@@ -5,10 +5,10 @@ import {
   RefreshCw,
   ListChecks,
   Phone,
-  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import Footer from "../footer/Footer";
 
 type Props = {
   protocolo: string;
@@ -115,14 +115,7 @@ export default function ManifestacaoSucesso({
         </p>
 
         {/* LGPD */}
-        <p className="mt-6 pt-4 border-t border-border text-xs text-muted-foreground">
-          <span className="flex items-center justify-center text-center">
-            <ShieldCheck className="h-4 w-4 shrink-0 mt-0.5" />
-            <span className="leading-snug">
-              Dados estão protegidos pela Lei Geral de Proteção de Dados (LGPD).
-            </span>
-          </span>
-        </p>
+        <Footer />
       </section>
     </div>
   );

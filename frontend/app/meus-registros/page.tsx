@@ -16,8 +16,9 @@ import {
   ChevronRight,
   Loader2,
   AlertCircle,
-  Inbox
+  Inbox,
 } from "lucide-react";
+import Footer from "@/components/footer/Footer";
 
 export default function MeusRegistrosPage() {
   const [registros, setRegistros] = useState<RegistroResumo[]>([]);
@@ -177,6 +178,7 @@ export default function MeusRegistrosPage() {
               ))}
             </ul>
           )}
+          <Footer />
         </section>
       </main>
     </div>
