@@ -7,6 +7,8 @@ import { CidadaoModule } from './cidadao/cidadao.module';
 import { UploadModule } from './upload/upload.module';
 import { HealthModule } from './health/health.module';
 import { AnexoModule } from './anexo/anexo.module';
+import { AdminModule } from './admin/admin.module';
+import { GeocodeModule } from './geocode/geocode.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { AnexoModule } from './anexo/anexo.module';
     CidadaoModule,
     UploadModule,
     AnexoModule,
+    AdminModule,
+    GeocodeModule
   ],
 })
 export class AppModule {}
