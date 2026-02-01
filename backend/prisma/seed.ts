@@ -29,6 +29,7 @@ async function main() {
   // ===============================
   const admin = await prisma.adminUser.create({
     data: {
+      id: 'd9b9b7a0-0b7e-4b6e-8b0a-9b7e4b6e8b0a', // ID estático
       nome: 'Administrador Geral',
       email: 'admin@participa.df.gov.br',
       senhaHash: senhaHash,
@@ -39,6 +40,7 @@ async function main() {
 
   const colaborador = await prisma.adminUser.create({
     data: {
+      id: 'c8b9b7a0-0b7e-4b6e-8b0a-8b7e4b6e8b0b', // ID estático
       nome: 'Servidor Ouvidoria',
       email: 'ouvidoria@participa.df.gov.br',
       senhaHash: senhaHash,

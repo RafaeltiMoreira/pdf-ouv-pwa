@@ -137,7 +137,7 @@ export default function DetalheManifestacaoPage() {
   const respostas = registro.respostas.map(r => ({
     id: r.id,
     mensagem: r.conteudo,
-    autor: r.usuario.nome || "Equipe da Ouvidoria",
+    autor: r.usuario?.nome || "Equipe da Ouvidoria",
     data: r.createdAt,
     anexos: r.anexos || [],
   }));

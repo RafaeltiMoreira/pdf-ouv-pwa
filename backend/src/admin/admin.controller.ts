@@ -62,7 +62,9 @@ export class AdminController {
     @Req() req: Request,
   ) {
     return this.adminService.responderManifestacao(
-      id, conteudo, req.user["sub"]
+      id,
+      conteudo,
+      req.user['id'],
     );
   }
 
@@ -95,7 +97,7 @@ export class AdminController {
     return this.adminService.atualizarStatus(
       id,
       dto.status,
-      req.user["sub"],
+      req.user['id'],
     );
   }
 }

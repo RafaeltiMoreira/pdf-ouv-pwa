@@ -77,11 +77,19 @@ export class AdminService {
       }),
       this.prisma.tramitacao.create({
         data: {
-          manifestacaoId,
           statusAnterior: manifestacao.status,
           statusNovo: status,
-          observacao: "Status alterado pelo administrador",
-          adminUserId,
+          observacao: 'Status alterado pelo administrador',
+          manifestacao: {
+            connect: {
+              id: manifestacaoId,
+            },
+          },
+          adminUser: {
+            connect: {
+              id: adminUserId,
+            },
+          },
         },
       }),
     ]);
@@ -123,11 +131,19 @@ export class AdminService {
       }),
       this.prisma.tramitacao.create({
         data: {
-          manifestacaoId,
           statusAnterior: manifestacao.status,
           statusNovo: StatusManifestacao.RESPONDIDA,
-          observacao: "Manifestação respondida pelo administrador",
-          adminUserId,
+          observacao: 'Manifestação respondida pelo administrador',
+          manifestacao: {
+            connect: {
+              id: manifestacaoId,
+            },
+          },
+          adminUser: {
+            connect: {
+              id: adminUserId,
+            },
+          },
         },
       }),
     ]);
