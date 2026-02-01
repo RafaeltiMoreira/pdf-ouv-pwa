@@ -26,9 +26,8 @@ enum TipoManifestacao {
 enum StatusManifestacao {
   RECEBIDA
   EM_ANALISE
-  EM_ATENDIMENTO
   RESPONDIDA
-  FINALIZADA
+  CONCLUIDA
   ARQUIVADA
 }
 
@@ -167,8 +166,8 @@ model Tramitacao {
   observacao     String?            @db.Text
   
   // Responsável pela tramitação
-  usuarioId String?
-  usuario   Usuario? @relation(fields: [usuarioId], references: [id])
+  adminUserId String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id])
   
   // Relacionamento
   manifestacaoId String
@@ -190,8 +189,8 @@ model Resposta {
   publico  Boolean @default(true)
   
   // Responsável
-  usuarioId String
-  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  adminUserId String
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id])
   
   // Relacionamento
   manifestacaoId String
@@ -256,34 +255,7 @@ model ClassificacaoIA {
   @@map("classificacoes_ia")
 }
 
-model Usuario {
-  id String @id @default(uuid())
-  
-  // Dados pessoais
-  nome       String  @db.VarChar(255)
-  email      String  @unique @db.VarChar(255)
-  cpf        String  @unique @db.VarChar(14)
-  
-  // Autenticação
-  senha      String  @db.VarChar(255)
-  ativo      Boolean @default(true)
-  
-  // Perfil
-  perfil     String  @db.VarChar(50) // admin, atendente, gestor
-  orgao      String? @db.VarChar(255)
-  
-  // Relacionamentos
-  tramitacoes Tramitacao[]
-  respostas   Resposta[]
-  
-  // Auditoria
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  
-  @@index([email])
-  @@map("usuarios")
-}
+
 
 // ============================================
 // MODELOS DE AUDITORIA E LOGS
@@ -309,4 +281,26 @@ model LogAcesso {
   @@index([createdAt])
   @@index([usuarioId])
   @@map("logs_acesso")
+}
+
+// Usuário Admin
+
+model AdminUser {
+  id        String   @id @default(uuid())
+  nome      String
+  email     String   @unique
+  senhaHash String
+  role      AdminRole
+  ativo     Boolean  @default(true)
+
+  tramitacoes Tramitacao[]
+  respostas   Resposta[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum AdminRole {
+  admin
+  colaborador
 }
