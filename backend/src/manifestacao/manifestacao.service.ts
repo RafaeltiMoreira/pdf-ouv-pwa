@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -12,6 +13,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ManifestacaoService {
+  private readonly logger = new Logger(ManifestacaoService.name);
+
   constructor(
     private prisma: PrismaService,
     private config: ConfigService,
@@ -27,12 +30,13 @@ export class ManifestacaoService {
       anexos?: Express.Multer.File[];
     },
   ) {
-    // Validação: se não for anônimo, exige dados do cidadão
-    if (!createDto.anonimo && !createDto.cidadao) {
-      throw new BadRequestException(
-        'Dados do cidadão são obrigatórios para manifestações não anônimas',
-      );
-    }
+    // this.logger.log(
+    //   `DTO recebido para criar manifestação: ${JSON.stringify(
+    //     createDto,
+    //     null,
+    //     2,
+    //   )}`,
+    // );
 
     // Gerar protocolo único
     const protocolo = await this.gerarProtocolo();

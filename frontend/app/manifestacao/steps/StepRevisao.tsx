@@ -12,7 +12,9 @@ import {
   ShieldCheck,
   Loader2,
   AlertCircle,
-  User
+  User,
+  Mic,
+  Download,
 } from "lucide-react";
 
 type Props = {
@@ -135,6 +137,40 @@ export default function StepRevisao({
             {data.conteudo || "---"}
           </p>
         </div>
+
+        {/* Áudio */}
+        {data.audioBlob && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <Mic className="h-3.5 w-3.5" />
+              Áudio gravado
+            </div>
+            <div className="flex items-center gap-3">
+              <p className="text-card-foreground text-sm">
+                Um áudio foi gravado para a manifestação.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  const url = URL.createObjectURL(data.audioBlob!);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `gravacao-manifestacao.${
+                    data.audioMimeType.split("/")[1] || "webm"
+                  }`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+                className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+              >
+                <Download className="h-3 w-3" />
+                Baixar para conferir
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Anexos */}
         <div className="space-y-1">

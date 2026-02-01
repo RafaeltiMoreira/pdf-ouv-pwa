@@ -35,6 +35,10 @@ type DraftData = {
   audioMimeType: string;
   anexos: File[];
   anonimo: boolean;
+  localizacao?: {
+    lat: string;
+    lng: string;
+  };
 }
 
 const initialDraft: DraftData = {
@@ -44,6 +48,7 @@ const initialDraft: DraftData = {
   audioMimeType: "",
   anexos: [],
   anonimo: false,
+  localizacao: undefined,
 };
 
 export default function ManifestacaoPage() {

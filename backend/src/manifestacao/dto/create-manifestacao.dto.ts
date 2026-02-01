@@ -5,10 +5,12 @@ import {
   MinLength,
   MaxLength,
   IsEmail,
-  IsArray,
   ValidateNested,
+  ValidateIf,
+  IsDefined,
+  IsNotEmptyObject,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CidadaoDataDto {
@@ -48,14 +50,24 @@ export class CreateManifestacaoDto {
     example: false,
     default: false,
   })
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.toLowerCase() === 'true';
+    }
+    return !!value;
+  })
   @IsBoolean()
   anonimo: boolean;
 
   @ApiPropertyOptional({
     description: 'Dados do cidadão (obrigatório se não for anônimo)',
-    type: 'object',
+    type: CidadaoDataDto,
   })
-  @IsOptional()
+  @ValidateIf((o) => o.anonimo === false)
+  @IsDefined({
+    message: 'Dados do cidadão são obrigatórios para manifestações não anônimas',
+  })
+  @IsNotEmptyObject()
   @ValidateNested()
   @Type(() => CidadaoDataDto)
   cidadao?: CidadaoDataDto;
