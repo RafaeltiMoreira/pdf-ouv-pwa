@@ -50,11 +50,13 @@ export default function StepDados({ data, onChange, onNext }: Props) {
           type="checkbox"
           id="anonimo"
           checked={data.anonimo}
-          onChange={(e) => {
-            if (e.target.checked) {
+          onChange={() => {
+            if (!data.anonimo) {
+              // Só abre modal se ainda NÃO for anônimo
               setModalAnonimoAberto(true);
             } else {
-              atualizar("anonimo", false);
+              // Permite desfazer anonimato
+              onChange({ anonimo: false });
             }
           }}
           className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
@@ -64,15 +66,11 @@ export default function StepDados({ data, onChange, onNext }: Props) {
         </label>
       </div>
 
-      {/* MODAL ANONIMATO (SEM LIBS) */}
       {modalAnonimoAberto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="bg-card rounded-2xl max-w-xl w-full p-6 space-y-4 relative">
             <button
-              onClick={() => {
-                atualizar("anonimo", false);
-                setModalAnonimoAberto(false);
-              }}
+              onClick={() => setModalAnonimoAberto(false)}
               className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
             >
               <X className="h-5 w-5" />
@@ -108,10 +106,7 @@ export default function StepDados({ data, onChange, onNext }: Props) {
             <div className="flex justify-end gap-3 pt-4">
               <button
                 type="button"
-                onClick={() => {
-                  atualizar("anonimo", false);
-                  setModalAnonimoAberto(false);
-                }}
+                onClick={() => setModalAnonimoAberto(false)}
                 className="px-4 py-2 rounded-xl border border-border hover:bg-muted"
               >
                 Cancelar
@@ -120,7 +115,10 @@ export default function StepDados({ data, onChange, onNext }: Props) {
               <button
                 type="button"
                 onClick={() => {
-                  atualizar("anonimo", true);
+                  onChange({
+                    anonimo: true,
+                    cidadao: undefined,
+                  });
                   setModalAnonimoAberto(false);
                 }}
                 className="px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"

@@ -8,7 +8,9 @@ import { Clock, CheckCircle2, CircleDot } from "lucide-react";
 export type ManifestacaoStatus =
   | "RECEBIDA"
   | "EM_ANALISE"
-  | "CONCLUIDA";
+  | "RESPONDIDA"
+  | "CONCLUIDA"
+  | "ARQUIVADA";
 
 /**
  * Props do componente StatusBadge
@@ -40,10 +42,20 @@ const STATUS_CONFIG: Record<
     icon: <Clock className="h-4 w-4" />,
     className: "bg-amber-100 text-amber-700 border-amber-200",
   },
+  RESPONDIDA: {
+    label: "Respondida",
+    icon: <CheckCircle2 className="h-4 w-4" />,
+    className: "bg-purple-100 text-purple-700 border-purple-200",
+  },
   CONCLUIDA: {
     label: "Concluída",
     icon: <CheckCircle2 className="h-4 w-4" />,
     className: "bg-green-100 text-green-700 border-green-200",
+  },
+  ARQUIVADA: {
+    label: "Arquivada",
+    icon: <CheckCircle2 className="h-4 w-4" />,
+    className: "bg-gray-100 text-gray-700 border-gray-200",
   },
 };
 

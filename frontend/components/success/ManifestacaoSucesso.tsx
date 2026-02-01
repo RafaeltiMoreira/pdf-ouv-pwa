@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { CheckCircle, Copy, RefreshCw, ListChecks, Phone, ShieldCheck } from "lucide-react";
+import {
+  CheckCircle,
+  Copy,
+  RefreshCw,
+  ListChecks,
+  Phone,
+  ShieldCheck,
+} from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -13,6 +20,7 @@ export default function ManifestacaoSucesso({
   novaManifestacao,
 }: Props) {
   const [copied, setCopied] = useState(false);
+
   async function copyProtocolo() {
     try {
       await navigator.clipboard.writeText(protocolo);
@@ -25,12 +33,15 @@ export default function ManifestacaoSucesso({
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4">
+    <div className="min-h-[calc(100dvh-64px)] w-full flex items-center justify-center p-4">
       <section className="w-full max-w-md bg-card p-8 rounded-2xl shadow-lg border border-border text-center">
         {/* Success Icon */}
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center">
-            <CheckCircle className="h-9 w-9 text-accent-foreground" strokeWidth={2.5} />
+            <CheckCircle
+              className="h-9 w-9 text-accent-foreground"
+              strokeWidth={2.5}
+            />
           </div>
         </div>
 
@@ -47,25 +58,25 @@ export default function ManifestacaoSucesso({
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
             Número do Protocolo
           </p>
+
           <div className="flex items-center justify-center gap-3">
-            <span className="text-xl font-bold text-card-foreground tracking-wide font-mono">
+            <span className="text-xl font-bold tracking-wide font-mono">
               {protocolo}
             </span>
+
             <button
               type="button"
               onClick={copyProtocolo}
-              className={`
-              p-2 rounded-lg transition-colors
-              ${copied
-                  ? "bg-accent/10 text-accent"
-                  : "hover:bg-muted text-muted-foreground hover:text-card-foreground"
-                }
-            `}
               aria-label="Copiar protocolo"
+              className={`p-2 rounded-lg transition-colors ${copied
+                ? "bg-accent/10 text-accent"
+                : "hover:bg-muted text-muted-foreground hover:text-card-foreground"
+                }`}
             >
               <Copy className="h-4 w-4" />
             </button>
           </div>
+
           <p className="text-xs text-muted-foreground mt-2">
             Guarde este número para acompanhar o andamento do registro.
           </p>
@@ -84,26 +95,30 @@ export default function ManifestacaoSucesso({
           <button
             type="button"
             onClick={novaManifestacao}
-            className="w-full inline-flex items-center justify-center gap-2 border border-border text-card-foreground py-3 px-4 rounded-xl font-medium hover:bg-muted transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 border border-border py-3 px-4 rounded-xl font-medium hover:bg-muted transition-colors"
           >
             <RefreshCw className="h-5 w-5" />
             Nova manifestação
           </button>
         </div>
 
-        {/* Help Link */}
+        {/* Help */}
         <p className="text-xs text-muted-foreground mt-8 flex items-center justify-center gap-1">
-          Duvidas? Entre em contato pelo{" "}
-          <a href="tel:162" className="text-primary hover:underline inline-flex items-center gap-1">
+          Dúvidas? Entre em contato pelo{" "}
+          <a
+            href="tel:162"
+            className="text-primary hover:underline inline-flex items-center gap-1"
+          >
             <Phone className="h-3 w-3" />
             162
           </a>
         </p>
 
+        {/* LGPD */}
         <p className="mt-6 pt-4 border-t border-border text-xs text-muted-foreground">
-          <span className="flex items-center justify-center gap-1">
-            <ShieldCheck className="h-4 w-4 shrink-0" />
-            <span>
+          <span className="flex items-center justify-center text-center">
+            <ShieldCheck className="h-4 w-4 shrink-0 mt-0.5" />
+            <span className="leading-snug">
               Dados estão protegidos pela Lei Geral de Proteção de Dados (LGPD).
             </span>
           </span>

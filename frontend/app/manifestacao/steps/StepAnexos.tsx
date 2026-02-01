@@ -15,6 +15,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { toast } from "sonner";
+import axios from "axios";
 
 type Props = {
   data: ManifestacaoForm;
@@ -29,6 +30,15 @@ type EnderecoResumo = {
   cidade?: string;
   uf?: string;
 };
+
+// const nominatimApi = axios.create({
+//   baseURL: "https://nominatim.openstreetmap.org",
+//   timeout: 8000,
+//   headers: {
+//     "User-Agent": "ParticipaDF-Ouvidoria/1.0 (contato@participa.df.gov.br)",
+//     Accept: "application/json",
+//   },
+// });
 
 export default function StepAnexos({
   data,
@@ -55,6 +65,8 @@ export default function StepAnexos({
   }
 
   function capturarLocalizacao() {
+    setEndereco(null);
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         onChange({
@@ -63,13 +75,19 @@ export default function StepAnexos({
             lng: pos.coords.longitude.toString(),
           },
         });
-        toast.success("Localização capturada com sucesso!");
+        toast.success("Localização atualizada com sucesso!");
       },
       () => {
         toast.error("Não foi possível obter a localização.");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
       }
     );
   }
+
 
   function getFileIcon(fileName: string) {
     const ext = fileName.split('.').pop()?.toLowerCase();
@@ -92,23 +110,27 @@ export default function StepAnexos({
       setLoadingEndereco(true);
 
       try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${data.localizacao.lat}&lon=${data.localizacao.lng}&format=json`
-        );
-        const json = await res.json();
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/geocode/reverse`,
+          {
+            params: {
+              lat: data.localizacao.lat,
+              lon: data.localizacao.lng,
+            },
+          });
 
-        const addr = json.address || {};
+        const addr = response.data?.address || {};
 
         setEndereco({
-          logradouro:
-            addr.road ||
-            addr.neighbourhood ||
-            addr.suburb,
+          logradouro: addr.road || addr.neighbourhood || addr.suburb,
           bairro: addr.neighbourhood,
           cidade: addr.city || addr.town || addr.village,
           uf: addr.state_code || addr.state,
         });
-      } catch {
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error("Erro ao buscar endereço:", error.message);
+        }
         setEndereco(null);
       } finally {
         setLoadingEndereco(false);
@@ -197,15 +219,15 @@ export default function StepAnexos({
             type="button"
             onClick={capturarLocalizacao}
             className={`
-              inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all
-              ${data.localizacao
-                ? "bg-accent/10 text-accent border border-accent/30"
+                inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all
+                ${data.localizacao
+                ? "bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20"
                 : "bg-destructive/10 text-destructive border border-destructive/30 hover:bg-destructive/20"
               }
             `}
           >
             <MapPin className="h-4 w-4" />
-            {data.localizacao ? "Localização adicionada" : "Usar localização atual"}
+            {data.localizacao ? "Atualizar localização" : "Usar localização atual"}
           </button>
 
           {data.localizacao && mapaUrl && (
