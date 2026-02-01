@@ -125,6 +125,12 @@ npm run db:seed || print_info "Seed já aplicada anteriormente"
 cd ..
 
 # =========================
+# IMPORTANTE:
+# Novas migrations devem ser criadas manualmente com:
+# npx prisma migrate dev --name <nome_da_migration>
+# =========================
+
+# =========================
 # RESUMO
 # =========================
 echo ""
