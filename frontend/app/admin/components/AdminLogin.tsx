@@ -33,7 +33,7 @@ export default function AdminLogin() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="text-sm font-medium">Email</label>
+          <label className="text-sm font-medium">E-mail</label>
           <div className="relative">
             <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <input
@@ -42,6 +42,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full pl-9 pr-3 py-2 border rounded-lg bg-background"
+              placeholder="seu.email@exemplo.com"
             />
           </div>
         </div>
@@ -56,6 +57,7 @@ export default function AdminLogin() {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               className="w-full pl-9 pr-3 py-2 border rounded-lg bg-background"
+              placeholder="Digite sua senha"
             />
           </div>
         </div>

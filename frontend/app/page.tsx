@@ -203,7 +203,7 @@ export default function Home() {
       </section>
 
       {/* ================= FOOTER ================= */}
-      <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground space-y-2">
+      <footer className="py-6 text-center text-sm text-muted-foreground space-y-2">
         <p>
           1º Hackathon em Controle Social – Desafio Participa DF
         </p>
